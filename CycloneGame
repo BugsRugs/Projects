@@ -1,0 +1,271 @@
+const int buttonPin = 11;
+const int speaker = 12;
+int currGameMode = 0;
+int buttonState = 0;
+int count = 1;
+int period = 120;
+unsigned long timeNow = 0;
+
+
+void setup() {
+  // put your setup code here, to run once:
+Serial.begin(100);
+pinMode(2,OUTPUT);//yellow pins
+pinMode(3,OUTPUT);
+pinMode(4,OUTPUT);
+pinMode(5,OUTPUT);
+pinMode(6,OUTPUT);//green pin :)
+pinMode(7,OUTPUT);
+pinMode(8,OUTPUT);
+pinMode(9,OUTPUT);
+pinMode(10,OUTPUT);//last yellow pin
+pinMode(buttonPin, INPUT);//button pin
+//begining song
+tone(12, 493, 987);//speaker is pin #12
+delay(100);
+tone(12, 739, 622 );
+delay(100);
+tone(12, 987, 739);
+delay(100);
+tone(12,622, 523 );
+delay(100);
+tone(12,1046,783 );
+delay(100);
+tone(12, 659,493);
+delay(100);
+tone(12, 987, 739);
+delay(100);
+tone(12, 622, 622 );
+delay(100);
+tone(12,659,698 );
+delay(100);
+tone(12, 698,739);
+delay(100);
+tone(12,783,783 );
+delay(100);
+tone(12, 830, 880);
+delay(100);
+tone(12, 880, 932);
+delay(100);
+tone(12, 987);
+delay(100);
+noTone(12);
+}
+
+void loop(){
+
+
+  while(count < 10){//going up!
+    digitalWrite(count, HIGH);
+    while(millis() < timeNow + period){// checking to see if the button is pressed
+      buttonState = digitalRead(buttonPin);
+      if(buttonState == HIGH){
+        buttonState = digitalRead(buttonPin);
+        return;
+      }
+    }
+     if(millis() > timeNow + period){// this if acts like delay with the benifit of not stopping everything cold in its tracks
+       if(buttonState == HIGH){
+        interrupt();
+        --count;//to counteract count++ at the end of while loop
+       }
+       timeNow = millis();
+       digitalWrite(count, LOW);
+       ++count; 
+     }   
+  }
+
+
+  
+if(count == 10){
+  digitalWrite(count, HIGH);
+  while(millis() < timeNow + period){
+  buttonState = digitalRead(buttonPin);
+  if(buttonState == HIGH){
+     buttonState = digitalRead(buttonPin);
+     return;
+    }
+  }
+  if(millis() > timeNow + period){
+    if(buttonState == HIGH){
+      interrupt(); 
+      ++count;// count is set to 2 in interupt so this is to counteract --count at the end of method
+    }
+    timeNow = millis();
+    digitalWrite(count, LOW);
+    --count;
+  }
+}
+
+
+
+while(count > 2){
+  digitalWrite(count, HIGH);
+    while(millis() < timeNow + period){
+      buttonState = digitalRead(buttonPin);
+      if(buttonState == HIGH){
+        buttonState = digitalRead(buttonPin);
+        return;
+      }
+    }
+  if(millis() > timeNow + period){
+    if(buttonState == HIGH){
+      interrupt();
+      ++count; // count is set to 2 in interupt so this is to counteract --count at the end of method
+    }
+    timeNow = millis();
+    digitalWrite(count, LOW);
+    --count;
+  }
+}
+
+
+
+if(count == 2){
+  digitalWrite(count, HIGH);
+    while(millis() < timeNow + period){
+      buttonState = digitalRead(buttonPin);
+      if(buttonState == HIGH){
+        buttonState = digitalRead(buttonPin);
+        return;
+      }
+    }
+  if(millis() > timeNow + period){
+    if(buttonState == HIGH){
+      interrupt();
+    }
+    timeNow = millis();
+    digitalWrite(count, LOW);
+  }
+}
+
+
+
+}
+
+void interrupt(){
+ if(count == 6){
+  ++currGameMode;
+  gameModeSelector();//changes the speed for the next round if you won
+  //play a winners tune
+   tone(speaker, 400);
+   delay(100);
+   tone(speaker, 600);
+   delay(100);
+   tone(speaker,800);
+   delay(100);
+   noTone(speaker);
+  delay(1500);
+  }else{
+    --currGameMode;
+    gameModeSelector();//changes
+    //play a losers tune
+     tone(speaker,800);
+   delay(100);
+   tone(speaker, 600);
+   delay(100);
+   tone(speaker, 400);
+   delay(100);
+   noTone(speaker);
+
+  }
+digitalWrite(count, LOW);
+count = 2;
+}
+
+void gameModeSelector(){
+  //this method is purely to change the gamemode by changing period. 
+  if(currGameMode < 0){//retry lvl 1
+    currGameMode = 0;
+  }
+  if(currGameMode == 0){//level 1
+    period = 120;//sets period
+    levelFlash();// flashes green LED X number of times for level
+    return; //exits method to start the main loop
+  }
+  if(currGameMode == 1){// lvl 2
+    period = 100;
+    levelFlash();
+    return;
+  }
+  if(currGameMode == 2){// lvl 3
+    period = 80;
+    levelFlash();
+    return;
+  }
+  if(currGameMode == 3){// lvl 4
+    period = 60;
+    levelFlash();
+    return;
+  }
+  if(currGameMode == 4){// lvl 5
+    period = 40;
+    levelFlash();
+    return;
+  }
+  if(currGameMode == 5){// lvl 6
+    period = 20;
+    levelFlash();
+    return;
+  }
+  if(currGameMode == 6){//easter egg if someone makes it to lvl 7    
+    for(int j = 0; j < 7; j++){ //blink 7 times. Congrats you made it to lvl 7!
+      for(int i = 2; i <= 10; i++){//turn on all lights
+         digitalWrite(i, HIGH);
+      }
+      delay(100);//pause then...
+      for(int i = 10; i >= 2; --i){//turn off all lights
+         digitalWrite(i, LOW);
+      }
+      delay(100);
+    }
+    for(int i = 0; i < 200; i++){//turn lights in random order. Make it look like it breaks
+      int x = random(2, 10);
+      digitalWrite(x, HIGH);
+      delay(35);
+      digitalWrite(x, LOW);
+    }
+    currGameMode = 0;
+    period = 120;
+    return;
+}
+}
+
+void levelFlash(){
+  for(int i = 0; i < (currGameMode + 2); i++){//flahing code
+    delay(200);
+    digitalWrite(6, HIGH);
+    delay(100);
+    digitalWrite(6, LOW);
+  }
+}
+
+
+
+
+
+//Same code but with delay
+//while(count < 10){//going up!
+//    digitalWrite(count, HIGH);
+////    delay(period); //easy but causes problems
+//    digitalWrite(count, LOW);
+//    ++count;
+//}
+////count = 10 tell to wait, decrement count and continue on to next bit of code
+//if(count == 10){
+//  digitalWrite(count, HIGH);
+////  delay(period);
+//  digitalWrite(count, LOW);
+//    --count;
+//}
+//while(count > 2){
+//  digitalWrite(count, HIGH);
+////  delay(period);
+//    digitalWrite(count, LOW);
+//    --count;
+//}
+//if(count == 2){
+//  digitalWrite(count, HIGH);
+////  delay(period);
+//  digitalWrite(count, LOW);
+//}
