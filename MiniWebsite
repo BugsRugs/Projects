@@ -1,0 +1,31 @@
+<html>
+<head>
+   <meta charset="utf-8">
+   <meta name="viewport" content="width=device-width, initial-scale=1">
+   <title>BMW's Website</title>
+</head>
+<body style = "background-color:Peru;">
+<h1 style="text-align:center;">Step by step proof on how to code in HTML?</h1>
+<h3 <br></h3>
+<p style="text-align:center;"><a href = "https://coder-coder.com/how-to-make-simple-website-html/" target = "1">resources</a>
+<br>
+<p style="text-align:center;"><img src = "capture.PNG">
+  <html>
+  <head>
+      <title>Space Clicker</title>
+  </head>
+
+  <body>
+      <script type="text/javascript">
+      var clicks = 1;
+      function hello() {
+          clicks *= 1.618034;
+          document.getElementById("clicks").innerHTML = clicks;
+      };
+      </script>
+      <button type="button" onclick="hello()" > Fibonacci Ratio Multiplier</button>
+      <p style="text-align:center;">Clicks: <a id="clicks">0</a></p>
+  </body></html>
+  </div>
+</body>
+</html>
